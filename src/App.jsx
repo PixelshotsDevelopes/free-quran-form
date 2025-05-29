@@ -55,8 +55,17 @@ const USAQuestion = ({ onSelect, onBack }) => (
   </div>
 );
 
-const AddressForm = ({ onBack }) => (
-  <form action="https://formbold.com/s/3Lnrx" method="POST" className="flex flex-col space-y-4 w-full max-w-md">
+const AddressForm = ({ onBack, userType, faith, inUSA }) => (
+  <form
+    action="https://formbold.com/s/3Lnrx"
+    method="POST"
+    className="flex flex-col space-y-4 w-full max-w-md"
+  >
+    {/* Hidden fields for tracking responses */}
+    <input type="hidden" name="userType" value={userType || ''} />
+    <input type="hidden" name="faith" value={faith || ''} />
+    <input type="hidden" name="inUSA" value={inUSA ? 'Yes' : 'No'} />
+
     <input type="text" name="name" placeholder="Full Name" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="text" name="address" placeholder="Street Address" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="text" name="city" placeholder="City" className="p-3 bg-gray-800 rounded text-white" required />
@@ -64,6 +73,7 @@ const AddressForm = ({ onBack }) => (
     <input type="text" name="zip" placeholder="ZIP Code" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="email" name="email" placeholder="Email Address" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="tel" name="phone" placeholder="Phone Number" className="p-3 bg-gray-800 rounded text-white" required />
+
     <button type="submit" className="bg-green-700 py-3 rounded font-bold text-white">Submit</button>
     <button type="button" onClick={onBack} className="bg-yellow-600 py-2 rounded font-medium text-white">Previous</button>
   </form>
@@ -120,7 +130,14 @@ export default function App() {
         />
       )}
 
-      {step === 5 && <AddressForm onBack={() => setStep(4)} />}
+      {step === 5 && (
+        <AddressForm
+          onBack={() => setStep(4)}
+          userType={userType}
+          faith={faith}
+          inUSA={inUSA}
+        />
+      )}
 
       {step === 10 && (
         <div className="text-center space-y-4">
