@@ -1,11 +1,7 @@
 import { useState } from 'react';
 
-const StepOne = ({ onSelect }) => {
-  const options = [
-    'Interested in Islam',
-    'Revert Muslim',
-    'Born Muslim'
-  ];
+const StepOne = ({ onSelect, onBack }) => {
+  const options = ['Interested in Islam', 'Revert Muslim', 'Born Muslim'];
 
   return (
     <div className="flex flex-col items-center space-y-4">
@@ -21,6 +17,7 @@ const StepOne = ({ onSelect }) => {
           </button>
         ))}
       </div>
+      <button onClick={onBack} className="mt-4 bg-yellow-600 px-4 py-2 rounded">Previous</button>
     </div>
   );
 };
@@ -72,13 +69,6 @@ const AddressForm = ({ onBack }) => (
   </form>
 );
 
-const NewsletterForm = () => (
-  <form action="https://formbold.com/s/YOUR_FORMBOLD_ENDPOINT" method="POST" className="flex flex-col space-y-4 w-full max-w-md">
-    <input type="email" name="email" placeholder="Email Address" className="p-3 bg-gray-800 rounded text-white" required />
-    <button type="submit" className="bg-blue-600 py-3 rounded font-bold text-white">Subscribe</button>
-  </form>
-);
-
 export default function App() {
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState(null);
@@ -91,43 +81,91 @@ export default function App() {
         <>
           <h1 className="text-3xl font-bold mb-2">Interested in Islam?</h1>
           <p className="mb-6">Order a free Quran</p>
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button onClick={() => setStep(2)} className="bg-green-600 px-6 py-3 rounded-xl">Get Started</button>
-            <a href="https://zamzamzakat.com/index.php/donations/donate-a-quran/" target="_blank" className="bg-blue-600 px-6 py-3 rounded-xl">Donate a Quran</a>
+            <a href="https://zamzamzakat.com/index.php/donations/donate-a-quran/" target="_blank" className="bg-blue-600 px-6 py-3 rounded-xl text-center">Donate a Quran</a>
           </div>
         </>
       )}
 
-      {step === 2 && <StepOne onSelect={(type) => {
-        setUserType(type);
-        if (type === 'Born Muslim') setStep(10);
-        else if (type === 'Interested in Islam') setStep(3);
-        else setStep(4);
-      }} />}
+      {step === 2 && (
+        <StepOne
+          onSelect={(type) => {
+            setUserType(type);
+            if (type === 'Born Muslim') setStep(10);
+            else if (type === 'Interested in Islam') setStep(3);
+            else setStep(4);
+          }}
+          onBack={() => setStep(1)}
+        />
+      )}
 
-      {step === 3 && <StepTwoA onSelect={(faith) => { setFaith(faith); setStep(4); }} onBack={() => setStep(2)} />}
+      {step === 3 && (
+        <StepTwoA
+          onSelect={(faith) => {
+            setFaith(faith);
+            setStep(4);
+          }}
+          onBack={() => setStep(2)}
+        />
+      )}
 
-      {step === 4 && <USAQuestion onSelect={(yes) => {
-        if (yes) setStep(5);
-        else setStep(11);
-        setInUSA(yes);
-      }} onBack={() => userType === 'Interested in Islam' ? setStep(3) : setStep(2)} />}
+      {step === 4 && (
+        <USAQuestion
+          onSelect={(yes) => {
+            setInUSA(yes);
+            setStep(yes ? 5 : 11);
+          }}
+          onBack={() => (userType === 'Interested in Islam' ? setStep(3) : setStep(2))}
+        />
+      )}
 
       {step === 5 && <AddressForm onBack={() => setStep(4)} />}
 
       {step === 10 && (
-        <>
-          <p className="text-center max-w-xl mb-4">Sorry, we are only shipping Qurans to new Muslims or those interested in Islam.</p>
-          <NewsletterForm />
-          <button onClick={() => setStep(2)} className="bg-yellow-600 px-6 py-2 rounded mt-4">Previous</button>
-        </>
+        <div className="text-center space-y-4">
+          <p>Sorry, we are only shipping Qurans to new Muslims or those interested in Islam.</p>
+          <div>
+            <a
+              href="https://zamzamzakat.com/index.php/donations/donate-a-quran/"
+              target="_blank"
+              className="bg-blue-600 px-6 py-3 rounded-xl inline-block"
+            >
+              Donate a Quran
+            </a>
+          </div>
+          <div>
+            <button
+              onClick={() => setStep(2)}
+              className="bg-yellow-600 px-6 py-2 rounded"
+            >
+              Previous
+            </button>
+          </div>
+        </div>
       )}
 
       {step === 11 && (
-        <>
-          <p className="text-center max-w-xl mb-4">Sorry, we are currently shipping only in the United States.</p>
-          <button onClick={() => setStep(4)} className="bg-yellow-600 px-6 py-2 rounded">Previous</button>
-        </>
+        <div className="text-center space-y-4">
+          <p>Sorry, we are currently shipping only in the United States.</p>
+          <div>
+            <a
+              href="https://zamzamzakat.com/index.php/donations/donate-a-quran/"
+              target="_blank"
+              className="bg-blue-600 px-6 py-3 rounded-xl inline-block"
+            >
+              Donate a Quran
+            </a>
+          </div>
+          <div>
+            <button
+              onClick={() => setStep(4)}
+              className="bg-yellow-600 px-6 py-2 rounded"
+            >
+              Previous
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
