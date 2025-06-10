@@ -55,16 +55,39 @@ const USAQuestion = ({ onSelect, onBack }) => (
   </div>
 );
 
-const AddressForm = ({ onBack, userType, faith, inUSA }) => (
+const QuranLanguage = ({ onSelect, onBack }) => {
+  const languages = ['English', 'Spanish'];
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <h2 className="text-xl font-bold">Choose Quran Language</h2>
+      <div className="flex space-x-6">
+        {languages.map(lang => (
+          <button
+            key={lang}
+            onClick={() => onSelect(lang)}
+            className="bg-gray-800 hover:bg-green-600 transition px-6 py-3 rounded-xl font-medium"
+          >
+            {lang}
+          </button>
+        ))}
+      </div>
+      <button onClick={onBack} className="mt-4 bg-yellow-600 px-4 py-2 rounded">Previous</button>
+    </div>
+  );
+};
+
+const AddressForm = ({ onBack, userType, faith, inUSA, language }) => (
   <form
-    action="https://formbold.com/s/3Lnrx"
+    action="https://formbold.com/s/oeq7j"
     method="POST"
     className="flex flex-col space-y-4 w-full max-w-md"
   >
-    {/* Hidden fields for tracking responses */}
+    {/* Hidden Fields */}
     <input type="hidden" name="userType" value={userType || ''} />
     <input type="hidden" name="faith" value={faith || ''} />
     <input type="hidden" name="inUSA" value={inUSA ? 'Yes' : 'No'} />
+    <input type="hidden" name="quranLanguage" value={language || ''} />
 
     <input type="text" name="name" placeholder="Full Name" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="text" name="address" placeholder="Street Address" className="p-3 bg-gray-800 rounded text-white" required />
@@ -73,6 +96,8 @@ const AddressForm = ({ onBack, userType, faith, inUSA }) => (
     <input type="text" name="zip" placeholder="ZIP Code" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="email" name="email" placeholder="Email Address" className="p-3 bg-gray-800 rounded text-white" required />
     <input type="tel" name="phone" placeholder="Phone Number" className="p-3 bg-gray-800 rounded text-white" required />
+
+    <textarea name="comment" placeholder="Additional comments (optional)" rows="4" className="p-3 bg-gray-800 rounded text-white" />
 
     <button type="submit" className="bg-green-700 py-3 rounded font-bold text-white">Submit</button>
     <button type="button" onClick={onBack} className="bg-yellow-600 py-2 rounded font-medium text-white">Previous</button>
@@ -84,6 +109,7 @@ export default function App() {
   const [userType, setUserType] = useState(null);
   const [faith, setFaith] = useState(null);
   const [inUSA, setInUSA] = useState(null);
+  const [language, setLanguage] = useState(null);
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
@@ -124,18 +150,29 @@ export default function App() {
         <USAQuestion
           onSelect={(yes) => {
             setInUSA(yes);
-            setStep(yes ? 5 : 11);
+            setStep(yes ? 6 : 11); // changed step 5 -> 6
           }}
           onBack={() => (userType === 'Interested in Islam' ? setStep(3) : setStep(2))}
         />
       )}
 
+      {step === 6 && (
+        <QuranLanguage
+          onSelect={(lang) => {
+            setLanguage(lang);
+            setStep(5);
+          }}
+          onBack={() => setStep(4)}
+        />
+      )}
+
       {step === 5 && (
         <AddressForm
-          onBack={() => setStep(4)}
+          onBack={() => setStep(6)}
           userType={userType}
           faith={faith}
           inUSA={inUSA}
+          language={language}
         />
       )}
 
